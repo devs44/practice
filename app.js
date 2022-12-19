@@ -16,28 +16,32 @@ app.get('/',(req,res)=>{
 })
 
 
-// app.get('/query',useCtrl.queryUser)
-// app.get('/finders',useCtrl.finderUser)
-// app.get('/get-set-virtual',useCtrl.getSetVirtualUser)
-// app.get('/validate',useCtrl.validateUser)
-// app.get('/raw-queries',useCtrl.rawQueriesUser)
-// app.get('/validate',useCtrl.oneToOneUser)
-// app.get('/validate',useCtrl.oneToManyUser)
+app.get('/query',useCtrl.queryUser)
+app.get('/finders',useCtrl.finderUser)
+app.get('/get-set-virtual',useCtrl.getSetVirtualUser)
+app.get('/validate',useCtrl.validateUser)
+app.get('/raw-queries',useCtrl.rawQueriesUser)
+// app.get('/one-to-one',useCtrl.oneToOneUser)
+// app.get('/one-to-many',useCtrl.oneToManyUser)
+
+app.get('/many-to-many',useCtrl.manyToManyUser)
 // app.get('/paranoid',useCtrl.paranoidUser)
 // app.get('/loading',useCtrl.loadingUser)
-// app.get('/eager',useCtrl.eagerloadingUser)
-// app.get('/creator',useCtrl.creatorUser)
+app.get('/eager',useCtrl.eagerloadingUser)
+app.get('/creator',useCtrl.creatorUser)
+ 
 
 
 
 
+app.get('/users',useCtrl.getUsers) 
+app.get('/add',useCtrl.addUser)
+app.get('/users/:id',useCtrl.getUser)
+app.post('/users',useCtrl.postUsers)
+app.delete('/users/:id',useCtrl.deleteUser)
+app.patch('/users/:id',useCtrl.patchUser)
 
-app.get('/users',useCtrl.getUsers)
-// app.get('/add',useCtrl.addUser)
-// app.get('/users/:id',useCtrl.getUser)
-// app.post('/users',useCtrl.postUsers)
-// app.delete('/users/:id',useCtrl.deleteUser)
-// app.patch('/users/:id',useCtrl.patchUser)
+app.post('/contacts',useCtrl.postContacts)
 
 
 

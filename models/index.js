@@ -20,7 +20,21 @@ db.Sequelize=Sequelize;
 db.sequelize=sequelize;
 
 db.user=require('./user')(sequelize,DataTypes,Model)
-// db.contact=require('./contact')(sequelize,DataTypes)
+db.contact=require('./contact')(sequelize,DataTypes,Model)
+db.userContacts=require('./userContacts')(sequelize,DataTypes,db.user,db.contact)
+
+// One to one
+// db.user.hasOne(db.contact);
+// db.contact.belongsTo(db.user);
+
+//one to many
+// db.user.hasMany(db.contact);
+// db.contact.belongsTo(db.user);
+
+//many to many
+db.user.belongsToMany(db.contact, { through: db.userContacts });
+db.contact.belongsToMany(db.user, { through: db.userContacts});
+
 // db.userContacts=require('./userContacts')(sequelize,DataTypes,db.user,db.contact)
 
 // db.user.hasMany(db.contact,{foreignKey:'user_id',as:'contactDetails'});
@@ -28,6 +42,8 @@ db.user=require('./user')(sequelize,DataTypes,Model)
 
 // db.user.belongsToMany(db.contact,{through:db.userContacts});
 // db.contact.belongsToMany(db.user,{through:db.userContacts});
+
+
 
 
 db.sequelize.sync({force:false})

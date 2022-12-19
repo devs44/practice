@@ -15,6 +15,8 @@ module.exports=(sequelize,DataTypes,User,Contact)=>{
                 key:'id'
             }
         }
+    },{
+        timestamps:false
     });
     return userContacts;
 }

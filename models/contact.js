@@ -9,7 +9,7 @@ module.exports=(sequelize,DataTypes)=>{
         Current_address:{
             type:DataTypes.STRING
         },
-        UserId:DataTypes.INTEGER
+        // UserId:DataTypes.INTEGER
      
     },{
 
