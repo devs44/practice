@@ -27,10 +27,16 @@ app.get('/raw-queries',useCtrl.rawQueriesUser)
 app.get('/many-to-many',useCtrl.manyToManyUser)
 // app.get('/paranoid',useCtrl.paranoidUser)
 // app.get('/loading',useCtrl.loadingUser)
+
 app.get('/eager',useCtrl.eagerloadingUser)
 app.get('/creator',useCtrl.creatorUser)
- 
-
+app.get('/scopes',useCtrl.scopesUser)
+app.get('/transactions',useCtrl.transactionsUser)
+app.get('/hooks',useCtrl.hooksUser)
+app.get('/polyOneToMany',useCtrl.polyOneToMany)
+app.get('/polyManyToMany',useCtrl.polyManyToMany)
+app.get('/queryInterface',useCtrl.queryInterface)
+// app.get('/subQueries',useCtrl.subQueryUsers)
 
 
 
@@ -40,6 +46,7 @@ app.get('/users/:id',useCtrl.getUser)
 app.post('/users',useCtrl.postUsers)
 app.delete('/users/:id',useCtrl.deleteUser)
 app.patch('/users/:id',useCtrl.patchUser)
+
 
 app.post('/contacts',useCtrl.postContacts)
 
