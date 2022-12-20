@@ -1,4 +1,4 @@
-const {sequelize}=require('../models')
+const {sequelize, image, tag}=require('../models')
 const db=require('../models')
 
 const User=db.user;
@@ -222,6 +222,232 @@ const creatorUser=async(req,res)=>{
     res.status(200).json({data:data})
 }
 
+const scopesUser=async(req,res)=>{
+    User.addScope('checkStatus',{
+        where:{
+            status:1
+        }
+    })
+    User.addScope('lastNameCheck',{
+        where:{
+            lastName:"V,Sunuwar"
+        }
+    })
+    User.addScope('includeContact',{
+        include:{
+            model:Contact
+        }
+    })
+    const data=await User.scope(['checkStatus','lastNameCheck']).findAll({});
+    res.status(200).json({data:data})
+}
+
+
+//unmanaged transaction
+// const transactionsUser=async(req,res)=>{
+//     const t=await db.sequelize.transaction();
+//     const data=await User.create({
+//         firstName:'Devi',
+//         lastName:'Sununwar'
+//     })
+//     if (data && data.id){
+//         try{
+//             await Contact.create({
+//                 permanent_address:'Kathmandu',
+//                 Current_address:'punjab',
+//                 'User_id':null
+//             })
+//             await t.commit();
+//             data['transaction_status']='commit';
+//         }
+//         catch(error){
+//             await t.rollback();
+//             data['transaction_status']='rollback';
+//             await User.destroy({
+//                 where:{
+//                     id:data.id
+//                 }
+//             })
+//         }
+//     }
+//     res.status(200).json({data:data})
+// }
+
+//managed transaction
+const transactionsUser=async(req,res)=>{
+    const data=await User.create({
+                firstName:'Sabitri',
+                lastName:'Sununwar'
+            })
+            try {
+
+                const result = await db.sequelize.transaction(async (t) => {
+              
+                  const contact = await Contact.create({
+                    permanent_address: 'Kathmandu',
+                    Current_address: 'Canberra',
+                    'UserId':null
+                  }, { transaction: t });
+                  return contact;
+              
+                });
+              
+                console.log('result ',result)
+              } catch (error) {
+                console.log('error: ',error.message)
+                await User.destroy({
+                    where:{
+                        id:data.id
+                    }
+                })
+
+              }
+    res.status(200).json({data:data})
+}
+
+const hooksUser=async(req,res)=>{
+    const data=await User.create({
+        firstName:"Kumar",
+        lastName:"Sanu",
+        status:0
+    })
+    res.status(200).json({data:data})
+}
+
+const Image=db.image;
+const Video=db.video;
+const Comment=db.comment;
+const Tag=db.tag;
+const TagTaggable=db.tagTaggable;
+
+const polyOneToMany=async(req,res)=>{
+    // const imageData=await Image.create({
+    //     title:'First Image',
+    //     url:'first_url'
+    // })
+    // const videoData=await Video.create({
+    //     title:'Second Video',
+    //     text:'awesome video'
+    // })
+    // if (imageData && imageData.id){
+    //     await Comment.create({
+    //         title:"First comment for image",
+    //         commentableId:imageData.id,
+    //         commentableType:'image'
+    //     })
+        
+    // }
+    // if (videoData && videoData.id){
+    //     await Comment.create({
+    //         title:"First comment for video",
+    //         commentableId:videoData.id,
+    //         commentableType:'video'
+    //     })
+    // }
+
+    //image to comment
+    // const  imageCommentData=await Image.findAll({
+    //     include:[{
+    //         model:Comment
+    //     }]
+
+    // })
+
+    //video to comment
+    const videoCommentData=await Video.findAll({
+        include:[{
+            model:Comment
+        }]
+    })
+    res.status(200).json({data:videoCommentData})
+}
+
+
+const polyManyToMany=async(req,res)=>{
+    
+    // const imageData=await Image.create({
+    //     title:'Second Image',
+    //     url:'second_url'
+    // })
+    // const videoData=await Video.create({
+    //     title:'Third Video',
+    //     text:'awesome video'
+    // })
+    // const tagData=await Tag.create({
+    //     name:'Good job'
+    // })
+    // if (tagData && tagData.id && imageData && imageData.id){
+    //         await TagTaggable.create({
+    //             tagId:tagData.id,
+    //             taggableId:imageData.id,
+    //             taggableType:'image'
+    //         })
+    //     }
+    // if (tagData && tagData.id && videoData && videoData.id){
+    //             await TagTaggable.create({
+    //                 tagId:tagData.id,
+    //                 taggableId:videoData.id,
+    //                 taggableType:'video'
+    //             })
+    // }
+    const tagData=await Tag.findAll({
+        include:[Image,Video]
+    })
+    res.status(200).json({data:tagData})
+}
+
+const queryInterface=async(req,res)=>{
+    const data={}
+    const queryInterface = db.sequelize.getQueryInterface();
+    // queryInterface.createTable('Person', {
+    //     name: db.DataTypes.STRING,
+    //     isBetaMember: {
+    //       type: db.DataTypes.BOOLEAN,
+    //       defaultValue: false,
+    //       allowNull: false
+    //     }
+    //   });
+    queryInterface.addColumn('Person', 'petName', { type: db.DataTypes.STRING });
+    res.status(200).json({data:data})
+}
+
+
+// async function makePostWithReactions(content, reactionTypes) {
+//     const post = await db.post.create({ content });
+//     await db.reaction.bulkCreate(
+//         reactionTypes.map(type => ({ type, postId: post.id }))
+//     );
+//     return post;
+// // }
+// const subQueryUsers=async(req,res)=>{
+//     // const data=await makePostWithReactions('Hello World', [
+//     //     'Like', 'Angry', 'Laugh', 'Like', 'Like', 'Angry', 'Sad', 'Like'
+//     // ]);
+//     // await makePostWithReactions('My Second Post', [
+//     //     'Laugh', 'Laugh', 'Like', 'Laugh'
+//     // ]);
+//     const data=await db.post.findAll({
+//         attributes: {
+//             include: [
+//                 [
+//                     // Note the wrapping parentheses in the call below!
+//                     db.sequelize.literal(`(
+//                         SELECT COUNT(*)
+//                         FROM reactions AS reaction
+//                         WHERE
+//                             reaction.postId = post.id
+//                             AND
+//                             reaction.type = "Laugh"
+//                     )`),
+//                     'laughReactionsCount'
+//                 ]
+//             ]
+//         }
+//     });
+//     res.status(200).json({data:data})
+// }
+
+
 module.exports={
     getUsers,
     addUser,
@@ -243,6 +469,14 @@ module.exports={
     // paranoidUser,
     // loadingUser,
     eagerloadingUser,
-    creatorUser
+    creatorUser,
+    scopesUser,
+    transactionsUser,
+    hooksUser,
+    polyOneToMany,
+    polyManyToMany,
+    queryInterface,
+    // subQueryUsers
+    
 
 }
